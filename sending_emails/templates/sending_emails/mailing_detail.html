@@ -1,0 +1,15 @@
+{% extends 'sending_emails/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-5">
+      <h3 class="card-text">{{ object.start_time }}</h3>
+      <p class="card-text">{{ object.end_time }}</p>
+      <p class="card-text">{{ object.mailing_status }}</p>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+{% endblock %}

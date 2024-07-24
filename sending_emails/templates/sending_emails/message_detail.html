@@ -1,0 +1,14 @@
+{% extends 'sending_emails/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-5">
+      <h3 class="card-text">{{ object.subject_massage }}</h3>
+      <p class="card-text">{{ object.massage }}</p>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+{% endblock %}
