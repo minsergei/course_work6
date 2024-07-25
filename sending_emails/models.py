@@ -18,8 +18,8 @@ class Clients(models.Model):
 
 
 class Message(models.Model):
-    subject_massage = models.CharField(max_length=80, verbose_name='Тема письма')
-    massage = models.TextField(verbose_name='Текст письма')
+    subject_message = models.CharField(max_length=80, verbose_name='Тема письма')
+    message = models.TextField(verbose_name='Текст письма')
     # owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Пользователь', null=True, blank=True)
 
     class Meta:
@@ -29,7 +29,7 @@ class Message(models.Model):
             ('view_mailing', 'Может просматривать любые рассылки.')]
 
     def __str__(self):
-        return f'{self.subject_massage} - {self.massage}'
+        return f'{self.subject_message} - {self.message}'
 
 
 class Mailing(models.Model):
@@ -43,21 +43,20 @@ class Mailing(models.Model):
         ('created', 'создана'),
         ('executing', 'запущена'),
         ('finished', 'закончена успешно'),
-        ('error', 'законечена с ошибками')
     )
 
-    start_time = models.DateTimeField(default=timezone.now, verbose_name='Начало рассылки')
-    end_time = models.DateTimeField(null=True, blank=True, verbose_name='Конец рассылки')
-    next_day = models.DateTimeField(null=True, blank=True, verbose_name='Следующая отправка рассылки')
+    start_time = models.DateTimeField(default=timezone.now, verbose_name='Начало рассылки', help_text="Формат DD.MM.YYYY HH:MM:SS",)
+    end_time = models.DateTimeField(null=True, blank=True, verbose_name='Конец рассылки', help_text="Формат DD.MM.YYYY HH:MM:SS",)
+    next_time_mailing = models.DateTimeField(null=True, blank=True, verbose_name='Следующее время рассылки', help_text="Формат DD.MM.YYYY HH:MM:SS",)
     frequency = models.CharField(max_length=50, choices=period_variants, default='per_day',
                                  verbose_name='периодичность')
     mailing_status = models.CharField(max_length=80, choices=status_variants, default='created',
                                       verbose_name='статус рассылки')
     clients = models.ManyToManyField(Clients, related_name='mailing', verbose_name='Клиенты для рассылки')
-    massage = models.ForeignKey(Message, verbose_name='Cообщение', on_delete=models.CASCADE, blank=True, null=True)
+    message = models.ForeignKey(Message, verbose_name='Cообщение', on_delete=models.CASCADE, blank=True, null=True)
 
     # owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Пользователь', null=True, blank=True)
-    is_active = models.BooleanField(default=True, verbose_name='Блокировка Рассылки')
+    is_active = models.BooleanField(default=True, verbose_name='Рассылка разрешена')
 
     class Meta:
         verbose_name = 'Рассылка'
@@ -75,7 +74,8 @@ class MailingAttempt(models.Model):
 
     last_attempt = models.DateTimeField(auto_now_add=True, verbose_name='дата и время последней попытки')
     status = models.CharField(choices=status_variants, default=None, verbose_name='статус попытки')
-    mail_response = models.CharField(max_length=50, verbose_name='ответ почтового сервера', blank=True, null=True)
+    mail_response = models.CharField(max_length=100, verbose_name='ответ почтового сервера', blank=True, null=True)
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка")
 
     class Meta:
         verbose_name = 'Попытка рассылки'

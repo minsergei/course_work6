@@ -9,11 +9,11 @@
         <div class="col">
           <div class="card shadow-sm">
             <div class="card-body">
-              <h3 class="card-text">{{ object.start_time }}</h3>
-              <p class="card-text">{{ object.end_time }}</p>
+              <h4 class="card-text">С {{ object.start_time }}</h4>
+              <h4 class="card-text">ПО {{ object.end_time }}</h4>
               <p class="card-text">{{ object.mailing_status }}</p>
               <p class="card-text">-------------------------</p>
-              <p class="card-text">Тема письма: {{ object.massage.subject_massage }}</p>
+              <p class="card-text">Тема письма: {{ object.message.subject_message }}</p>
               <p class="card-text">-------------------------</p>
               {% for version in object.clients.all %}
               <p>Клиент для рассылки: {{version.fio}} </p>

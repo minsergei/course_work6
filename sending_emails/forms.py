@@ -23,8 +23,7 @@ class ClientForm(StyleFormMixin, forms.ModelForm):
 class MailingForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
-        fields = "__all__"
-        # exclude = ('owner',)
+        exclude = ('next_time_mailing',)
 
 
 # class ManagerMailingForm(StyleFormMixin, forms.ModelForm):
