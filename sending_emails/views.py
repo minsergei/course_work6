@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy, reverse
@@ -13,7 +14,7 @@ from sending_emails.forms import ClientForm, MessageForm, MailingForm
 from sending_emails.models import Clients, Message, Mailing
 
 
-class ClientsListView(ListView):
+class ClientsListView(LoginRequiredMixin, ListView):
     """
     Контроллер отвечающий за отображение списка клиентов
     """
