@@ -16,7 +16,7 @@ urlpatterns = [
     path("delete/<int:pk>/", ClientDeleteView.as_view(), name="client_delete"),
 
     path("messages/", MessageListView.as_view(), name="messages_list"),
-    path("message/<int:pk>/", MessageDetailView.as_view(), name="message"),
+    path("message/<int:pk>/", cache_page(60)(MessageDetailView.as_view()), name="message"),
     path("message/create/", MessageCreateView.as_view(), name="message_create"),
     path("message/update/<int:pk>/", MessageUpdateView.as_view(), name="message_update"),
     path("message/delete/<int:pk>/", MessageDeleteView.as_view(), name="message_delete"),

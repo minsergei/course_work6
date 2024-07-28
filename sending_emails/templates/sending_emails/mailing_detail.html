@@ -11,5 +11,18 @@
     </div>
     <div class="col">
     </div>
+    <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Попытки отправки</h5>
+                    </div>
+                    <div class="card_body">
+                        {% for form in formset.forms %}
+                        <p class="card-text">-----------------</p>
+                        {{ form.as_p }}
+                        {% endfor %}
+                    </div>
+                </div>
+    </div>
   </div>
 {% endblock %}

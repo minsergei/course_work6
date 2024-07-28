@@ -9,9 +9,9 @@ from django.views.generic import (
     DeleteView, TemplateView,
 )
 import random
-
+from django.forms import inlineformset_factory
 from blog.models import Blog
-from sending_emails.forms import ClientForm, MessageForm, MailingForm, ManagerMailingForm
+from sending_emails.forms import ClientForm, MessageForm, MailingForm, ManagerMailingForm, AttemptForm, AdminMailingForm
 from sending_emails.models import Clients, Message, Mailing, MailingAttempt
 
 
@@ -188,6 +188,19 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
     """
     model = Mailing
 
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        VersionFormset = inlineformset_factory(
+            Mailing,
+            MailingAttempt,
+            AttemptForm,
+            extra=0,
+            can_delete=False,
+        )
+        context_data["formset"] = VersionFormset(instance=self.object)
+        return context_data
+
+
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
         user = self.request.user
@@ -226,9 +239,14 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingForm
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({'request': self.request})
-        return kwargs
+        user = self.request.user
+        if user == self.object.owner:
+            kwargs = super().get_form_kwargs()
+            kwargs.update({'request': self.request})
+            return kwargs
+        else:
+            kwargs = super().get_form_kwargs()
+            return kwargs
 
     def get_success_url(self):
         return reverse('sending_emails:mailing', args=[self.kwargs.get('pk')])
@@ -238,8 +256,10 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
         Функция, определяющая поля для редактирования в зависимости от прав пользователя
         """
         user = self.request.user
-        if user == self.object.owner or user.is_superuser:
+        if user == self.object.owner:
             return MailingForm
+        elif user.is_superuser:
+            return AdminMailingForm
         elif user.has_perm('sending_emails.deactivate_mailing'):
             return ManagerMailingForm
         else:

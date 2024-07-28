@@ -1,5 +1,5 @@
 from django import forms
-from .models import Clients, Mailing, Message
+from .models import Clients, Mailing, Message, MailingAttempt
 from django.forms import BooleanField
 
 
@@ -33,6 +33,12 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         self.fields["message"].queryset = Message.objects.filter(owner=user)
 
 
+class AdminMailingForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = Mailing
+        exclude = ('owner', 'is_active', 'next_time_mailing',)
+
+
 class ManagerMailingForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
@@ -43,3 +49,9 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Message
         exclude = ('owner',)
+
+
+class AttemptForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = MailingAttempt
+        fields = ('status', 'mail_response',)

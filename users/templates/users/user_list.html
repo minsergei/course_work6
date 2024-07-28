@@ -21,14 +21,13 @@
         <td>{% if perms.users.deactivate_user %}
             {% if user.is_active %}
             <a href="{% url 'users:blocking_user' user.pk %}"
-               class="btn btn-sm btn-outline-danger">Разблокировать пользователя</a>
+               class="btn btn-sm btn-outline-danger">Заблокировать пользователя</a>
             {% else %}
             <a href="{% url 'users:blocking_user' user.pk %}"
-               class="btn btn-sm btn-outline-success">Заблокировать пользователя</a>
+               class="btn btn-sm btn-outline-success">Разблокировать пользователя</a>
             {% endif %}
             {% endif %}
         </td>
-
     </tr>
     {% endfor %}
     </tbody>
