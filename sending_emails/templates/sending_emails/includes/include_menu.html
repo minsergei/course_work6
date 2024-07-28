@@ -1,0 +1,28 @@
+{% block block_name %}
+
+<div class="container text-center d-grid gap-3">
+  <div class="row align-items-start">
+    <div class="col">
+          <nav class="ms-5">
+            <a class="p-2 btn btn btn-danger" href="/">ГЛАВНАЯ</a>
+            <a class="p-2 btn btn-outline-primary" href="/clients/">Клиенты</a>
+            <a class="p-2 btn btn-outline-primary" href="/messages/">Сообщения</a>
+            <a class="p-2 btn btn-outline-primary" href="/mailings/">Рассылки</a>
+            {% if perms.sending_emails.deactivate_mailing %}
+            <a class="p-2 btn btn-outline-primary" href="/users/users_list/">Список пользователей</a>
+            {% endif %}
+          </nav>
+    </div>
+    <div class="col">
+          <nav class="ms-5">
+            {% if user.is_authenticated %}
+              <a class="p-2 btn btn-outline-primary" href="/users/logout/">Выйти</a>
+            {% else %}
+              <a class="p-2 btn btn-outline-primary" href="/users/login/">Войти</a>
+              <a class="p-2 btn btn-outline-primary" href="/users/register/">Регистрация</a>
+            {% endif %}
+          </nav>
+    </div>
+  </div>
+</div>
+{% endblock %}

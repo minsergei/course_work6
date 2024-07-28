@@ -1,0 +1,16 @@
+{% extends 'sending_emails/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-5">
+      <img src="{{ object.preview | media_filter }}">
+      <h3 class="card-text">Заголовок - {{ object.heading_blog }}</h3>
+      <p class="card-text">Данные - {{ object.content_blog }}</p>
+      <p class="card-text">Просмотры - {{ object.count_views }}</p>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+{% endblock %}
