@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     "sending_emails",
     'users',
+    'blog',
 ]
 
 MIDDLEWARE = [

@@ -6,11 +6,13 @@ from django.views.generic import (
     DetailView,
     CreateView,
     UpdateView,
-    DeleteView,
+    DeleteView, TemplateView,
 )
+import random
 
+from blog.models import Blog
 from sending_emails.forms import ClientForm, MessageForm, MailingForm, ManagerMailingForm
-from sending_emails.models import Clients, Message, Mailing
+from sending_emails.models import Clients, Message, Mailing, MailingAttempt
 
 
 class ClientsListView(LoginRequiredMixin, ListView):
@@ -203,6 +205,11 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     form_class = MailingForm
     success_url = reverse_lazy('sending_emails:mailings_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
+
     def form_valid(self, form):
         mailing = form.save()
         user = self.request.user
@@ -217,6 +224,11 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """
     model = Mailing
     form_class = MailingForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
 
     def get_success_url(self):
         return reverse('sending_emails:mailing', args=[self.kwargs.get('pk')])
@@ -246,3 +258,30 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user == self.object.owner or self.request.user.is_superuser:
             return self.object
         raise PermissionDenied
+
+
+class HomeView(TemplateView):
+    """
+    Контроллер главной страницы сайта
+    """
+    template_name = 'sending_emails/index.html'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        mailings = Mailing.objects.all()
+        clients = Clients.objects.all()
+        blog_list = list(Blog.objects.all())
+        random.shuffle(blog_list)
+        context_data['all_mailings'] = mailings.count()
+        context_data['active_mailings'] = mailings.filter(mailing_status='executing').count()
+        context_data['active_clients'] = clients.values('email').distinct().count()
+
+        context_data['blog_list'] = blog_list[:3]
+        return context_data
+
+
+class LogListView(LoginRequiredMixin, ListView):
+    """
+    Контроллер отвечающий за отображение списка попыток рассылок
+    """
+    model = MailingAttempt
