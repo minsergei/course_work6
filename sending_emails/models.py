@@ -1,13 +1,14 @@
 from django.utils import timezone
 from django.db import models
-# from users.models import User
+
+from users.models import User
 
 
 class Clients(models.Model):
     email = models.EmailField(unique=True, verbose_name='Почта')
     fio = models.CharField(max_length=50, verbose_name='ФИО')
     comment = models.TextField(blank=True, verbose_name='Коммент')
-    # owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Пользователь', null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Клиент'
@@ -20,7 +21,7 @@ class Clients(models.Model):
 class Message(models.Model):
     subject_message = models.CharField(max_length=80, verbose_name='Тема письма')
     message = models.TextField(verbose_name='Текст письма')
-    # owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Пользователь', null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Сообщение'
@@ -55,12 +56,15 @@ class Mailing(models.Model):
     clients = models.ManyToManyField(Clients, related_name='mailing', verbose_name='Клиенты для рассылки')
     message = models.ForeignKey(Message, verbose_name='Cообщение', on_delete=models.CASCADE, blank=True, null=True)
 
-    # owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Пользователь', null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', null=True, blank=True)
     is_active = models.BooleanField(default=True, verbose_name='Рассылка разрешена')
 
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+        permissions = [
+            ('deactivate_mailing', 'Can deactivate mailing'),
+        ]
 
     def __str__(self):
         return f'{self.start_time} - {self.end_time} - {self.frequency} - {self.mailing_status}'

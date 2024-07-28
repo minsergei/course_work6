@@ -16,24 +16,22 @@ class StyleFormMixin:
 class ClientForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Clients
-        fields = "__all__"
-        # exclude = ('owner',)
+        exclude = ('owner',)
 
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
-        exclude = ('next_time_mailing',)
+        exclude = ('owner', 'is_active', 'next_time_mailing',)
 
 
-# class ManagerMailingForm(StyleFormMixin, forms.ModelForm):
-#     class Meta:
-#         model = Mailing
-#         fields = ('status',)
-#
-#
+class ManagerMailingForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = Mailing
+        fields = ('is_active',)
+
+
 class MessageForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Message
-        fields = "__all__"
-        # exclude = ('owner',)
+        exclude = ('owner',)

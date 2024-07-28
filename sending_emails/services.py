@@ -32,8 +32,8 @@ def send_mailing():
         if not mailing.next_time_mailing:
             mailing.next_time_mailing = today
             mailing.save()
-        # Проверить, нужно ли отправить сообщение в текущий момент времени, с запасом в 10 секунд
-        if mailing.next_time_mailing <= today <= (mailing.next_time_mailing + timedelta(seconds=10)):
+        # Проверить, нужно ли отправить сообщение в текущий момент времени
+        if today >= mailing.next_time_mailing:
             mailing.mailing_status = 'executing'
             mailing.save()
             clients = mailing.clients.all()

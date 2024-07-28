@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import CreateView
 from users.forms import UserRegisterForm
 from users.models import User
@@ -9,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.auth.forms import PasswordResetForm
+from django.views.generic import ListView
 
 
 class LoginView(BaseLoginView):
@@ -65,3 +68,19 @@ def email_verification(request, token):
     user.is_active = True
     user.save()
     return redirect(reverse("users:login"))
+
+
+class UserListView(PermissionRequiredMixin, ListView):
+    model = User
+    permission_required = 'users.view_all_users'
+
+
+@permission_required('users.deactivate_user')
+def blocking_user(request, pk):
+    user = User.objects.get(pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect(reverse('users:users_list'))
